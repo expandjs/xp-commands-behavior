@@ -84,21 +84,21 @@ A behavior used to manage the application's commands.
              * Adds a map of commands.
              *
              * @method addCommands
-             * @param {Object} commands
+             * @param {Array | Object} commands
              * @returns {Element}
              */
             addCommands: function (commands) {
 
                 // Asserting
-                XP.assertArgument(XP.isObject(commands), 1, 'Object');
+                XP.assertArgument(XP.isCollection(commands), 1, 'Array or Object');
 
                 // Vars
-                var self = this;
+                var self        = this,
+                    arrIterator = function (commands) { XP.forEach(commands, function (name) { self.addCommand(name); }); return self; },
+                    objIterator = function (commands) { XP.forOwn(commands, function (options, name) { self.addCommand(name, options); }); return self; };
 
                 // Adding
-                XP.forOwn(commands, function (options, name) { self.addCommand(name, options); });
-
-                return self;
+                return (XP.isArrayable(commands) ? arrIterator : objIterator)(commands);
             },
 
             /**
